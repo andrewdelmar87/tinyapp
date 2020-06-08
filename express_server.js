@@ -6,7 +6,7 @@ app.set("view engine", "ejs");
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.tsn.ca"
 };
 
 app.get("/urls/:shortURL", (req, res) => {
