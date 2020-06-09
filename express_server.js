@@ -11,9 +11,16 @@ const urlDatabase = {
   "9sm5xK": "http://www.tsn.ca"
 };
 
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL]
+  res.redirect(longURL);
+});
+
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect(`/urls/:${shortURL}`); 
 });
 
 app.get("/urls/new", (req, res) => {
@@ -49,6 +56,6 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-function generateRandomString() => {
-  
-}
+function generateRandomString() { //creates random 6 random alphanumeric characters
+ return Math.random().toString(36).slice(2,8);
+};
