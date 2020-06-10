@@ -1,15 +1,33 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
+app.use(cookieParser())
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca/",
   "9sm5xK": "http://www.google.com/"
 };
+
+app.post("/urls/logout", (req, res) => {
+  res.clearCookie("username")
+  res.redirect('/urls')
+})
+
+app.post("/urls/login", (req, res) => {
+  res.cookie("username", req.body.username)
+  console.log('Username is: ', req.body.username)
+
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
+  res.redirect('/urls');
+});
 
 //POST route that updates longURL
 app.post("/urls/:shortURL/update", (req, res) => {
@@ -37,7 +55,11 @@ app.post("/urls", (req, res) => {
 
 //create new URL
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+  username: req.cookies["username"],
+    urls: urlDatabase
+  }
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -50,7 +72,9 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //My URL's
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { 
+    username: req.cookies["username"],
+    urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
