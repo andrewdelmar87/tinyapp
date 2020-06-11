@@ -58,7 +58,8 @@ app.post("/register", (req, res) => {
   }
   users[id] = newUser;
   // console.log(id, 'ID')
-  // res.cookie("user_id", id)
+  // console.log(id)
+  res.cookie("user_id", id)
 
   return res.redirect('/urls');
 })
@@ -68,37 +69,25 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls')
 })
 
+
+
 app.post("/login", (req, res) => {
   const email = req.body.email;
-  console.log('email', email)
+  
   const password = req.body.password;
-  console.log('password', password)
-  const user_id = users[id];
-  console.log('users[id]', users[id])
-
-  // let foundUser;
-  // console.log(users, 'users')
+  
+  
   for (const userId in users) {
-    // console.log(userId, 'userId')
+    console.log( 'userId', userId, users[userId])
     if (users[userId].email === email && users[userId].password === password) {
       const foundUser = users[userId];
-      // console.log(foundUser, 'foundUser')
+      console.log("user_id", userId )
       res.cookie("user_id", foundUser.id)
-      // console.log("user_id", user_id )
     }
-    return false
+    // return false
   }
 
-  // console.log(foundUser, 'foundUser')
-
-
-  // console.log(foundUser.id, 'foundUser.id')
-
-  // let templateVars = {
-  //   username: req.cookies["user_id"],
-  //   urls: urlDatabase
-  // };
-  console.log(req.cookies["user_id"], "req.cookies[user_id]")
+  console.log("req.cookies[user_id]", req.cookies["user_id"])
   return res.redirect('/urls');
 });
 
