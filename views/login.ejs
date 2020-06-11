@@ -24,9 +24,9 @@
         </div>
       </div>
         <div>
-              <form class="form-inline" action="/login" method="POST">
+              <form class="form-inline" action="/register" method="POST">
                 <div class="form-group mb-1">
-                  <button type="submit" class="btn btn btn-outline-dark mb-0">Login</button>
+                  <button type="submit" class="btn btn btn-outline-dark mb-0">Register</button>
                 </div>
               </form>
         </div>
@@ -35,10 +35,10 @@
   <h1>Login</h1>
   <form method="POST" action="/login">
     <label for="email"></label>
-    <input id="email" type="text" name="email"/>
+    <input id="email" type="text" name="email" placeholder="Email" required />
     <br/>
     <label for="password"></label>
-    <input id="password" type="password" name="password"/>
+    <input id="password" type="password" name="password" placeholder="Password" required/>
     <br/>
     <button type="Submit">Login</button>
   </form>

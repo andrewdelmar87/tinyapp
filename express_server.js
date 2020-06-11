@@ -34,19 +34,22 @@ app.post("/register", (req, res) => {
 
   //check if email already exists
   let foundUser;
+  
+  if (!email || !password) {
+    res.status(400)
+    res.send("400 Error")
+  }
+
   for (const userId in users) {
     if (users[userId].email === email) {
       foundUser = users[userId];
     }
   }
+
   if (foundUser) {
     return res.status(400).send('That email is already in use');
   }
-
-  if (users[userId].email === '' || users[userId].password === '') {
-    return res.status(400).send('Field cannot be empty');
-  }
-
+  
   //create uuid and new user obj
   let id = uuid().split('-')[0];
   const newUser = {
@@ -55,28 +58,38 @@ app.post("/register", (req, res) => {
     password
   }
   users[id] = newUser;
+  console.log(id, 'ID')
   res.cookie('user_id', id)
   //redirect
   return res.redirect('/urls');
 })
 
-app.post("/urls/logout", (req, res) => {
+app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect('/urls')
 })
 
-// app.post("/login", (req, res) => {
-//   res.cookie("user_id", req.body.username)
-//   console.log('Username is: ', req.body.username)
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  let foundUser;
+  console.log(users, 'users')
+  for (const userId in users) {
+    console.log(userId, 'userId')
+    if (users[userId].email === email) {
+      console.log('users[userId].email === email')
+      foundUser = users[userId];
+    }
+  }
+  console.log(foundUser, 'foundUser')
+  res.cookie("user_id", foundUser.id)
+  console.log(foundUser.id, 'foundUser.id')
 
-//   let templateVars = {
-//     username: req.cookies["user_id"],
-//     urls: urlDatabase
-//   };
-//   res.redirect('/urls');
-// });
-
-
+  let templateVars = {
+    username: req.cookies["user_id"],
+    urls: urlDatabase
+  };
+  return res.redirect('/urls');
+});
 
 //POST route that updates longURL
 app.post("/urls/:shortURL/update", (req, res) => {
@@ -104,13 +117,13 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-// app.get("/login", (req, res) => {
-//   let templateVars = {
-//     username: req.cookies["username"],
-//     urls: urlDatabase
-//   };
-//   res.render("login", templateVars);
-// })
+app.get("/login", (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
+  res.render("login", templateVars);
+})
 
 app.get("/register", (req, res) => {
   let templateVars = {
@@ -160,10 +173,6 @@ app.get("/urls/:shortURL", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
-
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
