@@ -71,18 +71,24 @@ app.post("/logout", (req, res) => {
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
+  const password = req.body.password;
+
   let foundUser;
   console.log(users, 'users')
   for (const userId in users) {
     console.log(userId, 'userId')
     if (users[userId].email === email) {
-      console.log('users[userId].email === email')
       foundUser = users[userId];
-    }
+      console.log(foundUser, 'foundUser')
+    } 
+    // else if (users[userId].password !== password) {
+    //   res.send('404 Error');
+    // }
   }
-  console.log(foundUser, 'foundUser')
+
+  // console.log(foundUser, 'foundUser')
   res.cookie("user_id", foundUser.id)
-  console.log(foundUser.id, 'foundUser.id')
+  // console.log(foundUser.id, 'foundUser.id')
 
   let templateVars = {
     username: req.cookies["user_id"],
