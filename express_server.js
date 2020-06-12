@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080; 
 const cookieParser = require('cookie-parser')
 const bodyParser = require("body-parser");
 const { v4: uuid } = require('uuid');
@@ -83,18 +83,14 @@ app.post("/login", (req, res) => {
     }
     // return false
   }
-
-  console.log("req.cookies[user_id]", req.cookies["user_id"])
   return res.redirect('/urls');
 });
 
-//POST route that updates longURL
 app.post("/urls/:shortURL/update", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect('/urls/' + req.params.shortURL);
 })
 
-//POST route that removes URL
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
@@ -138,12 +134,14 @@ app.get("/register", (req, res) => {
 })
 
 app.get("/urls", (req, res) => {
+
   if (req.cookies["user_id"]) {
     let templateVars = {
-      urls: urlDatabase,
+      urls: urlsForUser(req.cookies["user_id"]),
       user: users[req.cookies["user_id"]],
       username: users[req.cookies["user_id"]]
     };
+
     res.render("urls_index", templateVars);
   } else {
     res.redirect("/login")
@@ -158,14 +156,12 @@ app.get("/", (req, res) => {
   res.send("Hello! This is the home page.");
 });
 
-//redirects to long URL
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL]["longURL"]
   res.redirect(longURL);
 });
 
-//shows URL pair
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
@@ -182,6 +178,18 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-function generateRandomString() { //creates random 6 random alphanumeric characters
+function urlsForUser(id) {
+  
+  let output = {};
+  for (let url in urlDatabase) {
+    console.log("urlDatabase[url]", urlDatabase[url])
+    if (urlDatabase[url].userID === id) {
+      output[url] = urlDatabase[url]
+    }
+  }
+  return output;
+}
+
+function generateRandomString() {
  return Math.random().toString(36).slice(2,8);
 };
