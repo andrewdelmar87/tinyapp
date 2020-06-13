@@ -18,8 +18,10 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
-// const { generateRandomString } = require('./helpers');
-// const { urlsForUser } = require('./helpers');
+const { 
+  generateRandomString,
+  urlsForUser 
+} = require('./helpers');
 
 const urlDatabase = {
   b2xVn2: {longURL: "http://www.lighthouselabs.ca/", userID: "userRandomID"}
@@ -38,21 +40,21 @@ const users = {
   }
 }
 
-function generateRandomString() {
-  return Math.random().toString(36).slice(2,8);
-};
+// function generateRandomString() {
+//   return Math.random().toString(36).slice(2,8);
+// };
 
- function urlsForUser(id) {
+//  function urlsForUser(id) {
   
-  let output = {};
-  for (let url in urlDatabase) {
-    // console.log("urlDatabase[url].userID", urlDatabase[url].userID)
-    if (urlDatabase[url].userID === id) {
-      output[url] = urlDatabase[url];
-    }
-  }
-  return output;
-};
+//   let output = {};
+//   for (let url in urlDatabase) {
+//     // console.log("urlDatabase[url].userID", urlDatabase[url].userID)
+//     if (urlDatabase[url].userID === id) {
+//       output[url] = urlDatabase[url];
+//     }
+//   }
+//   return output;
+// };
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
@@ -174,7 +176,7 @@ app.get("/register", (req, res) => {
 
 app.get("/urls", (req, res) => {
 
-  const userUrls = urlsForUser(req.session.userid);
+  const userUrls = urlsForUser(req.session.userid, urlDatabase);
 
   if (req.session.userid) {
     let templateVars = {
