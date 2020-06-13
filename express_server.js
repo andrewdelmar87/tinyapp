@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-// app.use(cookieParser());
 app.use(bodyParser());
 app.use(cookieSession({
   name: 'session',
@@ -19,32 +18,12 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
-function urlsForUser(id) {
-  
-  let output = {};
-  for (let url in urlDatabase) {
-    // console.log("urlDatabase[url].userID", urlDatabase[url].userID)
-    if (urlDatabase[url].userID === id) {
-      output[url] = urlDatabase[url];
-    }
-  }
-  return output;
-}
-
-function generateRandomString() {
- return Math.random().toString(36).slice(2,8);
-}
-
-//
-// req.session.userid -> req.session.userid // this must be checking/reading the cookie
-// req.session.userid = "userid" is setting cookies and needs to be replaced with req.session.userid = "userid";
-// and clearing a cookie is req.session.userid = null; and needs to be replaced with req.session.userid = null;
+// const { generateRandomString } = require('./helpers');
+// const { urlsForUser } = require('./helpers');
 
 const urlDatabase = {
   b2xVn2: {longURL: "http://www.lighthouselabs.ca/", userID: "userRandomID"}
-};
-
-// console.log(urlDatabase[shortURL]["userID"])
+}
 
 const users = {
   "userRandomID": {
@@ -58,6 +37,22 @@ const users = {
     hashedPassword: bcrypt.hashSync("1", 10)
   }
 }
+
+function generateRandomString() {
+  return Math.random().toString(36).slice(2,8);
+};
+
+ function urlsForUser(id) {
+  
+  let output = {};
+  for (let url in urlDatabase) {
+    // console.log("urlDatabase[url].userID", urlDatabase[url].userID)
+    if (urlDatabase[url].userID === id) {
+      output[url] = urlDatabase[url];
+    }
+  }
+  return output;
+};
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
