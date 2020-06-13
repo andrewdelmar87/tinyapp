@@ -6,7 +6,6 @@ function urlsForUser(id, data) {
   
   let output = {};
   for (let url in data) {
-    // console.log("urlDatabase[url].userID", urlDatabase[url].userID)
     if (data[url].userID === id) {
       output[url] = data[url];
     }
