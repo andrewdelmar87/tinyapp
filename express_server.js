@@ -76,12 +76,12 @@ app.post("/register", (req, res) => {
   req.session.userid = id
 
   return res.redirect('/urls');
-})
+});
 
 app.post("/logout", (req, res) => {
   req.session.userid = null;
   res.redirect('/urls')
-})
+});
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
@@ -111,16 +111,38 @@ app.post("/login", (req, res) => {
 
 app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[req.params.shortURL] = {
-    longURL:req.body.longURL,
+    longURL: req.body.longURL,
     userID: req.session.user_id
   };
   res.redirect('/urls/' + req.params.shortURL);
-})
+});
+
+app.post('/urls/:shortURL/update', (req, res) => {
+  let shortURL = req.params.shortURL;
+  const fullObject = urlDatabase[shortURL];
+
+  if (!fullObject) {
+    res.status(301).send("this url doesn't exist");
+    return;
+  }
+
+  if (req.session.userid === fullObject.userID) {
+    const longURL = req.body.longURL;
+    let userID = fullObject.userID;
+
+    urlDatabase[shortURL] = { longURL, userID };
+
+    res.redirect('/urls');
+    return;
+  }
+
+  res.send("you don't have access to this url");
+});
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
-})
+});
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
@@ -147,7 +169,7 @@ app.get("/login", (req, res) => {
     urls: urlDatabase
   };
   res.render("login", templateVars);
-})
+});
 
 app.get("/register", (req, res) => {
 
@@ -156,7 +178,7 @@ app.get("/register", (req, res) => {
     urls: urlDatabase
   };
   res.render("register", templateVars);
-})
+});
 
 app.get("/urls", (req, res) => {
 
