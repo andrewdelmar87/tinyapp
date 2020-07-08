@@ -139,9 +139,22 @@ app.post('/urls/:shortURL/update', (req, res) => {
   res.send("you don't have access to this url");
 });
 
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls');
+app.post('/urls/:shortURL/delete', (req, res) => {
+  let shortURL = req.params.shortURL;
+  const fullObject = urlDatabase[shortURL];
+
+  if (!fullObject) {
+    res.status(301);
+    res.send("this url doesn't exist, please go back");
+    return;
+  }
+  if (req.session.userid === fullObject.userID) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+    return;
+  }
+
+  res.send("you don't have access to this url");
 });
 
 app.post("/urls", (req, res) => {
